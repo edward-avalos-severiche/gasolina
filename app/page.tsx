@@ -2,20 +2,21 @@ import VoiceAIAssistant from "@/components/voice-ai-assistant"
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-20 text-center">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(14,165,233,0.18),transparent_42%)]" aria-hidden="true" />
-        <div className="relative z-10 max-w-3xl">
-          <p className="mb-5 text-sm font-medium uppercase tracking-[0.35em] text-cyan-300">IA Gasolina</p>
-          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
-            Una experiencia estática preparada para tu asistente de IA
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-            Esta es una página de prueba sin base de datos. Abre la esfera de la esquina inferior derecha para conversar con Groq.
-          </p>
-          <div className="mx-auto mt-12 h-56 w-56 rounded-full bg-[radial-gradient(circle_at_32%_24%,#fff_0%,#a5f3fc_8%,#38bdf8_30%,#2563eb_65%,#172554_100%)] shadow-[0_0_100px_rgba(34,211,238,0.35),inset_-20px_-24px_50px_rgba(15,23,42,0.55)] motion-safe:animate-pulse" aria-label="Esfera animada de IA" role="img" />
-          <p className="mt-8 text-sm text-slate-400">Index estático de prueba · Sin Supabase</p>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#010616] text-white">
+      <div
+        className="absolute left-1/2 top-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/10 blur-3xl"
+        aria-hidden="true"
+      />
+      <section className="relative z-10 flex flex-col items-center text-center">
+        <div
+          className="sphere-idle relative h-[112px] w-[112px] rounded-full"
+          role="img"
+          aria-label="Esfera animada del asistente de IA"
+        >
+          <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_25%,#f6fdff_0%,#9eeeff_8%,#39bde8_32%,#1265c9_67%,#071a66_100%)] shadow-[0_0_38px_rgba(30,160,255,0.32),inset_-15px_-19px_25px_rgba(1,8,45,0.5)]" />
+          <div className="absolute left-[27px] top-[17px] h-[24px] w-[24px] rounded-full bg-white/60 blur-[7px]" />
         </div>
+        <p className="mt-[58px] text-[8px] font-medium text-slate-500">Index estático de prueba · Sin Supabase</p>
       </section>
       <VoiceAIAssistant />
     </main>
@@ -28,5 +29,4 @@ export const metadata = {
   title: "IA Gasolina",
   description: "Index estático de prueba con asistente de IA.",
 }
-// Metadata is exported from the page only to keep this static prototype self-contained.
 void metadata

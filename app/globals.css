@@ -6,6 +6,26 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .sphere-idle {
+    animation: sphere-float 4s ease-in-out infinite, sphere-glow 3s ease-in-out infinite;
+  }
+}
+
+@keyframes sphere-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.025); }
+}
+
+@keyframes sphere-glow {
+  0%, 100% { filter: saturate(1) brightness(1); }
+  50% { filter: saturate(1.15) brightness(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sphere-idle {
+    animation: none;
+  }
 }
 
 @layer base {
