@@ -1,79 +1,32 @@
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { ServiceCard } from "@/components/service-card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { supabase } from "@/lib/supabase"
+import VoiceAIAssistant from "@/components/voice-ai-assistant"
 
-export const dynamic = "force-dynamic" // Asegura que la página se renderice dinámicamente
-
-export default async function HomePage() {
-  const { data: services, error } = await supabase
-    .from("marketing_services")
-    .select("*")
-    .eq("is_featured", true) // Obtener solo los servicios destacados
-    .limit(3) // Limitar a 3 servicios para la página de inicio
-
-  if (error) {
-    console.error("Error fetching featured services:", error)
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center p-4">
-          <p className="text-red-500">Error al cargar los servicios destacados.</p>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
+export default function HomePage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-          <div className="container px-4 md:px-6 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4">
-              Impulsa tu Negocio con Marketing Digital
-            </h1>
-            <p className="mx-auto max-w-[700px] text-lg md:text-xl mb-8">
-              Ofrecemos soluciones de marketing digital personalizadas para ayudarte a crecer y alcanzar tus objetivos.
-            </p>
-            <Button asChild className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 text-lg">
-              <Link href="/services">Ver Todos Nuestros Servicios</Link>
-            </Button>
-          </div>
-        </section>
-
-        {/* Featured Services Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
-          <div className="container px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Nuestros Servicios Destacados</h2>
-              <p className="text-lg text-gray-600 mt-4">Soluciones probadas para el éxito de tu marca.</p>
-            </div>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {services.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  name={service.name}
-                  shortDescription={service.short_description}
-                  price={service.price}
-                  imageUrl={service.image_url}
-                  slug={service.slug}
-                />
-              ))}
-            </div>
-            <div className="text-center mt-12">
-              <Button asChild className="bg-blue-600 hover:bg-blue-700 px-8 py-3 text-lg">
-                <Link href="/services">Explorar Todos los Servicios</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+    <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
+      <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-20 text-center">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(14,165,233,0.18),transparent_42%)]" aria-hidden="true" />
+        <div className="relative z-10 max-w-3xl">
+          <p className="mb-5 text-sm font-medium uppercase tracking-[0.35em] text-cyan-300">IA Gasolina</p>
+          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-6xl">
+            Una experiencia estática preparada para tu asistente de IA
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            Esta es una página de prueba sin base de datos. Abre la esfera de la esquina inferior derecha para conversar con Groq.
+          </p>
+          <div className="mx-auto mt-12 h-56 w-56 rounded-full bg-[radial-gradient(circle_at_32%_24%,#fff_0%,#a5f3fc_8%,#38bdf8_30%,#2563eb_65%,#172554_100%)] shadow-[0_0_100px_rgba(34,211,238,0.35),inset_-20px_-24px_50px_rgba(15,23,42,0.55)] motion-safe:animate-pulse" aria-label="Esfera animada de IA" role="img" />
+          <p className="mt-8 text-sm text-slate-400">Index estático de prueba · Sin Supabase</p>
+        </div>
+      </section>
+      <VoiceAIAssistant />
+    </main>
   )
 }
+
+export const dynamic = "force-static"
+export const revalidate = false
+export const metadata = {
+  title: "IA Gasolina",
+  description: "Index estático de prueba con asistente de IA.",
+}
+// Metadata is exported from the page only to keep this static prototype self-contained.
+void metadata
