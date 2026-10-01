@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { HelpCircle, X, Mic, MicOff, Square } from "lucide-react"
+import { Fuel, HelpCircle, X, Mic, MicOff, Square } from "lucide-react"
 import { numberToWordsEs } from "@/utils/number-to-words"
 
 export default function VoiceAIAssistant() {
@@ -12,6 +12,9 @@ export default function VoiceAIAssistant() {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [hasGreetedThisSession, setHasGreetedThisSession] = useState(false)
   const [hasSpokenCurrentGreeting, setHasSpokenCurrentGreeting] = useState(false)
+  const [isFuelFormOpen, setIsFuelFormOpen] = useState(false)
+  const [fuelResult, setFuelResult] = useState("")
+  const [isEvaluatingFuel, setIsEvaluatingFuel] = useState(false)
 
   const synthRef = useRef<SpeechSynthesis | null>(null)
   const currentTranscriptRef = useRef<string>("") // Para acumular la transcripción
@@ -220,6 +223,33 @@ export default function VoiceAIAssistant() {
     }
   }
 
+  const evaluateFuel = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const values = Object.fromEntries(formData.entries())
+    const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia con criterio técnico del sector de hidrocarburos. No certifiques oficialmente el combustible y recomienda laboratorio cuando corresponda. Responde primero exactamente "Gasolina Buena", "Gasolina Basura" o "Requiere Revisión", y luego explica brevemente. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
+
+    setIsEvaluatingFuel(true)
+    setFuelResult("")
+    try {
+      const response = await fetch("/api/voice-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: prompt }),
+      })
+      const data = await response.json()
+      const result = data.response || "No se pudo evaluar la muestra."
+      setFuelResult(result)
+      speakText(result)
+    } catch {
+      const fallback = "No se pudo conectar con Groq. Revisa la configuración del servidor."
+      setFuelResult(fallback)
+      speakText(fallback)
+    } finally {
+      setIsEvaluatingFuel(false)
+    }
+  }
+
   const startListening = () => {
     if (recognitionRef.current && !isListening && !isSpeaking) {
       currentTranscriptRef.current = "" // Limpiar transcripción anterior
@@ -269,6 +299,80 @@ export default function VoiceAIAssistant() {
           <HelpCircle className="h-6 w-6 text-white" />
         </Button>
       </div>
+
+      <div className="fixed bottom-6 left-6 z-40">
+        <Button
+          onClick={() => setIsFuelFormOpen(true)}
+          aria-label="Evaluar gasolina"
+          className="h-12 w-12 rounded-full bg-amber-500 shadow-lg transition-all hover:bg-amber-600 hover:shadow-xl"
+          size="icon"
+        >
+          <Fuel className="h-6 w-6 text-white" />
+        </Button>
+      </div>
+
+      {isFuelFormOpen && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 p-4 backdrop-blur-sm">
+          <section className="mx-auto my-4 max-w-3xl rounded-2xl bg-slate-50 p-5 text-slate-900 shadow-2xl sm:p-8" aria-labelledby="fuel-title">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 id="fuel-title" className="text-2xl font-bold sm:text-3xl">Evaluación Preliminar de Gasolina</h1>
+                <p className="mt-2 text-sm text-slate-600">Introduzca los datos de la muestra. Cada campo contiene una explicación para ayudarle a interpretar el resultado.</p>
+              </div>
+              <Button type="button" onClick={() => setIsFuelFormOpen(false)} variant="ghost" size="icon" aria-label="Cerrar evaluación">
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <form onSubmit={evaluateFuel} className="mt-6 space-y-5">
+              <div className="rounded-xl border-2 border-emerald-500 bg-emerald-50 p-4 sm:p-5">
+                <h2 className="text-lg font-bold text-emerald-700">Datos que pueden indicar una gasolina en condiciones adecuadas</h2>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">1. Octanaje RON
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Introduzca el número RON medido. El octanaje indica la resistencia a la detonación. Como referencia, 50 es extremadamente bajo y 95 es elevado; compare siempre con la especificación del producto.</span>
+                    <input name="octanaje" type="number" min="0" placeholder="Ejemplo: 95" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal" />
+                  </label>
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">2. Densidad del combustible
+                    <span className="mt-2 block text-xs font-normal text-slate-600">La densidad ayuda a detectar diferencias frente a la especificación. Dentro del rango puede ser compatible; fuera requiere investigación; sin medición no es posible evaluarla.</span>
+                    <input name="densidad" type="number" step="0.001" min="0" placeholder="Ejemplo: 0.740" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal" />
+                  </label>
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">3. Apariencia de la gasolina
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Transparente y sin partículas puede ser compatible. Turbidez o partículas pueden indicar contaminación o agua. La apariencia por sí sola no certifica la calidad.</span>
+                    <select name="apariencia" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>Transparente y sin partículas visibles</option><option>Ligera turbidez / duda visual</option><option>Turbia o con partículas visibles</option></select>
+                  </label>
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">4. Presencia de agua
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Indique si mediante un método apropiado se detectó agua. Agua detectada requiere investigación; sin prueba no puede evaluarse.</span>
+                    <select name="agua" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>No se detecta agua</option><option>Se detecta agua</option><option>No se realizó la prueba</option></select>
+                  </label>
+                </div>
+              </div>
+
+              <div className="rounded-xl border-2 border-red-400 bg-red-50 p-4 sm:p-5">
+                <h2 className="text-lg font-bold text-red-700">Datos que pueden indicar un problema</h2>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">5. Sedimentos o partículas
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Compruebe si existen partículas o sedimentos visibles. Sin sedimentos es favorable; con sedimentos puede existir contaminación.</span>
+                    <select name="sedimentos" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>No se observan sedimentos</option><option>Se observan sedimentos</option></select>
+                  </label>
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold">6. Contenido de gomas
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Requiere análisis técnico. Dentro de especificación es compatible; fuera requiere investigación; sin análisis no puede determinarse.</span>
+                    <select name="gomas" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>Dentro de especificación</option><option>No se realizó análisis</option><option>Fuera de especificación</option></select>
+                  </label>
+                  <label className="rounded-lg bg-white p-4 text-sm font-semibold sm:col-span-2">7. Resultado de laboratorio
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Si dispone de análisis, indique si cumple la especificación correspondiente. Sin análisis, la evaluación será únicamente preliminar.</span>
+                    <select name="laboratorio" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>Cumple especificaciones</option><option>No existe análisis de laboratorio</option><option>No cumple especificaciones</option></select>
+                  </label>
+                </div>
+              </div>
+
+              <Button type="submit" disabled={isEvaluatingFuel} className="w-full bg-blue-700 py-6 text-base hover:bg-blue-800">{isEvaluatingFuel ? "Analizando muestra..." : "Analizar muestra"}</Button>
+            </form>
+
+            {fuelResult && <div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-6 whitespace-pre-wrap" role="status"><strong>Resultado de Groq:</strong><p className="mt-2">{fuelResult}</p></div>}
+            <div className="mt-5 rounded-lg bg-slate-100 p-4 text-xs text-slate-600"><strong>Importante:</strong> Esta herramienta es una evaluación preliminar y educativa. No sustituye análisis de laboratorio ni determina oficialmente el cumplimiento de una norma. No realice pruebas con fuego, llamas, chispas o calentamiento.</div>
+          </section>
+        </div>
+      )}
 
       {/* Modal de voz de la IA */}
       {isOpen && (
