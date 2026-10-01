@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 
-const groqModel = groq("llama-3.1-8b-instant")
+const groqModel = groq("openai/gpt-oss-20b")
 
 export async function POST(request: NextRequest) {
   try {
