@@ -229,8 +229,12 @@ export default function VoiceAIAssistant() {
     const values = Object.fromEntries(formData.entries())
     const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia con criterio técnico del sector de hidrocarburos. No certifiques oficialmente el combustible y recomienda laboratorio cuando corresponda. Responde primero exactamente "Gasolina Buena", "Gasolina Basura" o "Requiere Revisión", y luego explica brevemente. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
 
-    setIsEvaluatingFuel(true)
+    // Cambiar inmediatamente a la vista de voz para que la esfera acompañe todo el análisis.
+    setIsFuelFormOpen(false)
     setFuelResult("")
+    setIsEvaluatingFuel(true)
+    setHasSpokenCurrentGreeting(true)
+    setIsOpen(true)
     try {
       const response = await fetch("/api/voice-chat", {
         method: "POST",
