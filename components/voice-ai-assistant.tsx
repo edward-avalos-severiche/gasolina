@@ -3,17 +3,16 @@
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { HelpCircle, X, Mic, MicOff, Square } from "lucide-react"
-import type SpeechRecognition from "speech-recognition"
 import { numberToWordsEs } from "@/utils/number-to-words"
 
 export default function VoiceAIAssistant() {
   const [isOpen, setIsOpen] = useState(false)
   const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<any>(null)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [hasGreetedThisSession, setHasGreetedThisSession] = useState(false)
   const [hasSpokenCurrentGreeting, setHasSpokenCurrentGreeting] = useState(false)
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const synthRef = useRef<SpeechSynthesis | null>(null)
   const currentTranscriptRef = useRef<string>("") // Para acumular la transcripción
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null) // Temporizador de silencio
@@ -43,15 +42,15 @@ export default function VoiceAIAssistant() {
   // Inicializar APIs de voz
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
       if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition()
+        recognitionRef.current = new SpeechRecognition() as any
         recognitionRef.current.continuous = true // Escucha continuamente
         recognitionRef.current.interimResults = false // Solo resultados finales para procesar
 
         recognitionRef.current.lang = "es-ES"
 
-        recognitionRef.current.onresult = (event) => {
+        recognitionRef.current.onresult = (event: any) => {
           let finalTranscript = ""
           let hasHighConfidenceSpeech = false
 
@@ -90,7 +89,7 @@ export default function VoiceAIAssistant() {
           }
         }
 
-        recognitionRef.current.onerror = (event) => {
+        recognitionRef.current.onerror = (event: any) => {
           console.error("Speech recognition error:", event.error)
           setIsListening(false) // Asegurar que el estado de escucha se desactive en caso de error
           clearSilenceTimeout() // Limpiar cualquier temporizador pendiente
@@ -195,7 +194,7 @@ export default function VoiceAIAssistant() {
         // Regex para detectar números que podrían ser precios
         const priceRegex = /(\$?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:dólares|usd|euros)?/gi
 
-        processedResponse = processedResponse.replace(priceRegex, (match, p1) => {
+        processedResponse = processedResponse.replace(priceRegex, (match: string, p1: string) => {
           const cleanNumber = p1.replace(/[$,]/g, "").replace(",", ".")
           const num = Number.parseFloat(cleanNumber)
 
