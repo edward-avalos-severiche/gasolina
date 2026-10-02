@@ -227,7 +227,17 @@ export default function VoiceAIAssistant() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const values = Object.fromEntries(formData.entries())
-    const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia con criterio técnico del sector de hidrocarburos. No certifiques oficialmente el combustible y recomienda laboratorio cuando corresponda. Responde primero exactamente "Gasolina Buena", "Gasolina Basura" o "Requiere Revisión", y luego explica brevemente. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
+    const hasMinimumFailure =
+      values.agua === "Se detecta agua" ||
+      values.apariencia === "Turbia o con partículas visibles" ||
+      values.sedimentos === "Se observan sedimentos" ||
+      values.gomas === "Fuera de especificación" ||
+      values.laboratorio === "No cumple especificaciones" ||
+      (values.octanaje && Number(values.octanaje) < 50)
+    const requiredOpening = hasMinimumFailure
+      ? "Esta gasolina es de mala calidad y es una gasolina basura."
+      : ""
+    const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia como experto en hidrocarburos. Responde de forma MUY CORTA, máximo 2 frases. No des una explicación detallada ni certifiques oficialmente el combustible. Si falla algún requisito mínimo, comienza exactamente con: "Esta gasolina es de mala calidad y es una gasolina basura." Luego indica en pocas palabras la causa. Si no falla, comienza exactamente con "Gasolina Buena" o "Requiere Revisión" según los datos. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
 
     // Cambiar inmediatamente a la vista de voz para que la esfera acompañe todo el análisis.
     setIsFuelFormOpen(false)
@@ -242,7 +252,10 @@ export default function VoiceAIAssistant() {
         body: JSON.stringify({ message: prompt }),
       })
       const data = await response.json()
-      const result = data.response || "No se pudo evaluar la muestra."
+      const aiResponse = data.response || "No se pudo evaluar la muestra."
+      const result = requiredOpening && !aiResponse.startsWith(requiredOpening)
+        ? `${requiredOpening} ${aiResponse}`
+        : aiResponse
       setFuelResult(result)
       speakText(result)
     } catch {
