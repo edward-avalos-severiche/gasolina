@@ -64,29 +64,25 @@ export default function AISphereChat() {
     setIsTyping(true)
 
     try {
-      // Simular respuesta de IA
-      setTimeout(() => {
-        const responses = [
-          "Gracias por tu pregunta. Basándome en la información de nuestro sitio web, puedo ayudarte con eso.",
-          "Excelente consulta. Déjame buscar esa información en nuestra base de conocimientos.",
-          "Entiendo tu necesidad. Te puedo proporcionar información detallada sobre ese tema.",
-          "Perfecto, esa es una pregunta muy común. Te explico todo lo que necesitas saber.",
-        ]
-
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: randomResponse,
-          isUser: false,
-          timestamp: new Date(),
-        }
-
-        setMessages((prev) => [...prev, aiMessage])
-        setIsTyping(false)
-        setIsLoading(false)
-      }, 2000)
-    } catch (error) {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: inputValue }),
+      })
+      const data = await response.json()
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: data.response || data.error || "No recibí una respuesta de Groq.",
+        isUser: false,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, aiMessage])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { id: (Date.now() + 1).toString(), content: "No se pudo conectar con Groq.", isUser: false, timestamp: new Date() },
+      ])
+    } finally {
       setIsTyping(false)
       setIsLoading(false)
     }
