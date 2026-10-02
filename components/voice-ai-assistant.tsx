@@ -294,21 +294,21 @@ export default function VoiceAIAssistant() {
   return (
     <>
       {/* Botón de ayuda flotante */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-4 right-4 z-40 sm:bottom-6 sm:right-6">
         <Button
           onClick={() => setIsOpen(true)}
-          className="h-12 w-12 rounded-full bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl transition-all duration-300"
+          className="h-11 w-11 rounded-full bg-blue-500 shadow-lg transition-all duration-300 hover:bg-blue-600 hover:shadow-xl sm:h-12 sm:w-12"
           size="icon"
         >
           <HelpCircle className="h-6 w-6 text-white" />
         </Button>
       </div>
 
-      <div className="fixed bottom-6 left-6 z-40">
+      <div className="fixed bottom-4 left-4 z-40 sm:bottom-6 sm:left-6">
         <Button
           onClick={() => setIsFuelFormOpen(true)}
           aria-label="Evaluar gasolina"
-          className="h-12 w-12 rounded-full bg-amber-500 shadow-lg transition-all hover:bg-amber-600 hover:shadow-xl"
+          className="h-11 w-11 rounded-full bg-amber-500 shadow-lg transition-all hover:bg-amber-600 hover:shadow-xl sm:h-12 sm:w-12"
           size="icon"
         >
           <Fuel className="h-6 w-6 text-white" />
@@ -316,11 +316,11 @@ export default function VoiceAIAssistant() {
       </div>
 
       {isFuelFormOpen && (
-        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 p-4 backdrop-blur-sm">
-          <section className="mx-auto my-4 max-w-3xl rounded-2xl bg-slate-50 p-5 text-slate-900 shadow-2xl sm:p-8" aria-labelledby="fuel-title">
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-sm sm:p-4">
+          <section className="mx-auto my-2 max-w-3xl rounded-2xl bg-slate-50 p-4 text-slate-900 shadow-2xl sm:my-4 sm:p-8" aria-labelledby="fuel-title">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 id="fuel-title" className="text-2xl font-bold sm:text-3xl">Evaluación Preliminar de Gasolina</h1>
+                <h1 id="fuel-title" className="text-xl font-bold leading-tight sm:text-3xl">Evaluación Preliminar de Gasolina</h1>
                 <p className="mt-2 text-sm text-slate-600">Introduzca los datos de la muestra. Cada campo contiene una explicación para ayudarle a interpretar el resultado.</p>
               </div>
               <Button type="button" onClick={() => setIsFuelFormOpen(false)} variant="ghost" size="icon" aria-label="Cerrar evaluación">
@@ -330,7 +330,7 @@ export default function VoiceAIAssistant() {
 
             <form onSubmit={evaluateFuel} className="mt-6 space-y-5">
               <div className="rounded-xl border-2 border-emerald-500 bg-emerald-50 p-4 sm:p-5">
-                <h2 className="text-lg font-bold text-emerald-700">Datos que pueden indicar una gasolina en condiciones adecuadas</h2>
+                <h2 className="text-base font-bold leading-snug text-emerald-700 sm:text-lg">Datos que pueden indicar una gasolina en condiciones adecuadas</h2>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <label className="rounded-lg bg-white p-4 text-sm font-semibold">1. Octanaje RON
                     <span className="mt-2 block text-xs font-normal text-slate-600">Introduzca el número RON medido. El octanaje indica la resistencia a la detonación. Como referencia, 50 es extremadamente bajo y 95 es elevado; compare siempre con la especificación del producto.</span>
@@ -352,7 +352,7 @@ export default function VoiceAIAssistant() {
               </div>
 
               <div className="rounded-xl border-2 border-red-400 bg-red-50 p-4 sm:p-5">
-                <h2 className="text-lg font-bold text-red-700">Datos que pueden indicar un problema</h2>
+                <h2 className="text-base font-bold leading-snug text-red-700 sm:text-lg">Datos que pueden indicar un problema</h2>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <label className="rounded-lg bg-white p-4 text-sm font-semibold">5. Sedimentos o partículas
                     <span className="mt-2 block text-xs font-normal text-slate-600">Compruebe si existen partículas o sedimentos visibles. Sin sedimentos es favorable; con sedimentos puede existir contaminación.</span>
@@ -380,21 +380,21 @@ export default function VoiceAIAssistant() {
 
       {/* Modal de voz de la IA */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex min-h-dvh items-center justify-center overflow-hidden bg-black/70 px-3 py-16 backdrop-blur-sm sm:px-6 sm:py-20">
           {/* Botón cerrar */}
           <Button
             onClick={handleClose}
             variant="ghost"
             size="icon"
-            className="absolute top-8 right-8 z-10 h-12 w-12 rounded-full bg-white/10 hover:bg-white/20 text-white"
+            className="absolute right-3 top-3 z-10 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-8 sm:top-8 sm:h-12 sm:w-12"
           >
             <X className="h-6 w-6" />
           </Button>
 
           {/* Contenedor principal */}
-          <div className="flex flex-col items-center justify-center h-full w-full">
+          <div className="flex h-full w-full flex-col items-center justify-center">
             {/* Esfera de IA con animaciones */}
-            <div className="relative w-64 h-64 mb-16">
+            <div className="relative mb-20 h-[min(58vw,16rem)] w-[min(58vw,16rem)] sm:mb-24 sm:h-80 sm:w-80">
               <div
                 className={`w-full h-full rounded-full transition-all duration-500 ${
                   isSpeaking ? "animate-pulse scale-110" : isListening ? "scale-105 animate-bounce" : "scale-100"
@@ -438,12 +438,12 @@ export default function VoiceAIAssistant() {
             </div>
 
             {/* Controles de voz - Posicionados debajo de la esfera */}
-            <div className="absolute bottom-16 flex gap-4 z-20">
+            <div className="absolute bottom-5 z-20 flex gap-3 sm:bottom-16 sm:gap-4">
               {/* Botón de detener (rojo) */}
               {isSpeaking && (
                 <Button
                   onClick={stopSpeaking}
-                  className="h-16 w-16 rounded-full bg-red-600 hover:bg-red-700 shadow-lg transition-all duration-300"
+                  className="h-14 w-14 rounded-full bg-red-600 shadow-lg transition-all duration-300 hover:bg-red-700 sm:h-16 sm:w-16"
                   size="icon"
                 >
                   <Square className="h-8 w-8 text-white fill-white" />
@@ -453,7 +453,7 @@ export default function VoiceAIAssistant() {
               <Button
                 onClick={isListening ? stopListening : startListening}
                 disabled={isSpeaking}
-                className={`h-16 w-16 rounded-full transition-all duration-300 ${
+                className={`h-14 w-14 rounded-full transition-all duration-300 sm:h-16 sm:w-16 ${
                   isListening ? "bg-red-500 hover:bg-red-600 animate-pulse" : "bg-white/20 hover:bg-white/30"
                 } ${isSpeaking ? "opacity-50 cursor-not-allowed" : ""}`}
                 size="icon"
