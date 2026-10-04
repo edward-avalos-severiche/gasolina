@@ -348,7 +348,7 @@ No confundas hipótesis con hechos.
 No presentes opiniones como evidencia.
 Investiga cuando sea necesario.
 Contrasta las fuentes.
-Y cuando no exista suficiente información, reconoce la incertidumbre.`
+Y cuando no exista suficiente información, reconoce la incertidumbre.`,
 prompt: message,
     })
 
