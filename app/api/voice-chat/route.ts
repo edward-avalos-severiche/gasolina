@@ -349,7 +349,7 @@ No presentes opiniones como evidencia.
 Investiga cuando sea necesario.
 Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`
-      prompt: message,
+prompt: message,
     })
 
     return NextResponse.json({ response: text })
