@@ -143,11 +143,25 @@ export default function VoiceAIAssistant() {
     }
   }, [isOpen, hasGreetedThisSession, hasSpokenCurrentGreeting])
 
+  const cleanTextForSpeech = (text: string) => {
+    return text
+      .replace(/```[\s\S]*?```/g, "")
+      .replace(/^#{1,6}\s*/gm, "")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
+      .replace(/^\s*[-*_]{3,}\s*$/gm, "")
+      .replace(/[ \t]+/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim()
+  }
+
   const speakText = (text: string) => {
     if (synthRef.current) {
       synthRef.current.cancel()
 
-      const utterance = new SpeechSynthesisUtterance(text)
+      const utterance = new SpeechSynthesisUtterance(cleanTextForSpeech(text))
       utterance.lang = "es-ES"
       utterance.rate = 1.05 // Ligeramente más rápido para un tono más alegre
       utterance.pitch = 1.1 // Ligeramente más alto para un tono más alegre
