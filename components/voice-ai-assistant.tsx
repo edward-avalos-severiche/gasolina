@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Fuel, HelpCircle, X, Mic, MicOff, Square } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Fuel, HelpCircle, X, Mic, MicOff, Square, Send } from "lucide-react"
 import { numberToWordsEs } from "@/utils/number-to-words"
 
 export default function VoiceAIAssistant() {
@@ -15,6 +16,9 @@ export default function VoiceAIAssistant() {
   const [isFuelFormOpen, setIsFuelFormOpen] = useState(false)
   const [fuelResult, setFuelResult] = useState("")
   const [isEvaluatingFuel, setIsEvaluatingFuel] = useState(false)
+  const [isQuestionFormOpen, setIsQuestionFormOpen] = useState(false)
+  const [question, setQuestion] = useState("")
+  const [isAnsweringQuestion, setIsAnsweringQuestion] = useState(false)
 
   const synthRef = useRef<SpeechSynthesis | null>(null)
   const currentTranscriptRef = useRef<string>("") // Para acumular la transcripción
@@ -223,6 +227,32 @@ export default function VoiceAIAssistant() {
     }
   }
 
+  const submitQuestion = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const trimmedQuestion = question.trim()
+    if (!trimmedQuestion || isAnsweringQuestion) return
+
+    setIsQuestionFormOpen(false)
+    setQuestion("")
+    setIsAnsweringQuestion(true)
+    setHasSpokenCurrentGreeting(true)
+    setIsOpen(true)
+
+    try {
+      const response = await fetch("/api/voice-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmedQuestion }),
+      })
+      const data = await response.json()
+      speakText(data.response || "No pude encontrar una respuesta para tu pregunta.")
+    } catch {
+      speakText("Lo siento, hubo un problema al procesar tu pregunta.")
+    } finally {
+      setIsAnsweringQuestion(false)
+    }
+  }
+
   const evaluateFuel = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -327,6 +357,37 @@ export default function VoiceAIAssistant() {
           <Fuel className="h-6 w-6 text-white" />
         </Button>
       </div>
+
+      {isQuestionFormOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
+          <section className="w-full max-w-lg rounded-2xl bg-white p-6 text-slate-900 shadow-2xl sm:p-8" aria-labelledby="question-title">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="question-title" className="text-xl font-bold sm:text-2xl">Haz una pregunta</h2>
+                <p className="mt-2 text-sm text-slate-600">Escribe tu pregunta y la IA te responderá hablando.</p>
+              </div>
+              <Button type="button" onClick={() => setIsQuestionFormOpen(false)} variant="ghost" size="icon" aria-label="Cerrar formulario">
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+            <form onSubmit={submitQuestion} className="mt-6 flex flex-col gap-4">
+              <Textarea
+                value={question}
+                onChange={(event) => setQuestion(event.target.value)}
+                placeholder="Escribe tu pregunta..."
+                aria-label="Pregunta para la IA"
+                autoFocus
+                rows={5}
+                required
+              />
+              <Button type="submit" disabled={!question.trim() || isAnsweringQuestion} className="w-full bg-violet-600 hover:bg-violet-700">
+                <Send data-icon="inline-start" />
+                {isAnsweringQuestion ? "Procesando..." : "Enviar Pregunta"}
+              </Button>
+            </form>
+          </section>
+        </div>
+      )}
 
       {isFuelFormOpen && (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-sm sm:p-4">
@@ -452,6 +513,17 @@ export default function VoiceAIAssistant() {
 
             {/* Controles de voz - Posicionados debajo de la esfera */}
             <div className="absolute bottom-5 z-20 flex gap-3 sm:bottom-16 sm:gap-4">
+              {/* Botón para escribir una pregunta */}
+              <Button
+                onClick={() => setIsQuestionFormOpen(true)}
+                disabled={isSpeaking || isListening || isAnsweringQuestion}
+                aria-label="Escribir una pregunta"
+                className="h-14 w-14 rounded-full bg-violet-600 shadow-lg transition-all duration-300 hover:bg-violet-700 sm:h-16 sm:w-16"
+                size="icon"
+              >
+                <HelpCircle className="h-8 w-8 text-white" />
+              </Button>
+
               {/* Botón de detener (rojo) */}
               {isSpeaking && (
                 <Button
