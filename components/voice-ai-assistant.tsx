@@ -287,7 +287,8 @@ export default function VoiceAIAssistant() {
       ? "Esta gasolina es de mala calidad y es una gasolina basura."
       : ""
     const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia como experto en hidrocarburos. Responde de forma MUY CORTA, máximo 2 frases. No des una explicación detallada ni certifiques oficialmente el combustible. Si falla algún requisito mínimo, comienza exactamente con: "Esta gasolina es de mala calidad y es una gasolina basura." Luego indica en pocas palabras la causa. Si no falla, comienza exactamente con "Gasolina Buena" o "Requiere Revisión" según los datos. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
-
+    console.log("⛽ Prompt enviado:", prompt)
+    
     // Cambiar inmediatamente a la vista de voz para que la esfera acompañe todo el análisis.
     setIsFuelFormOpen(false)
     setFuelResult("")
@@ -301,6 +302,8 @@ export default function VoiceAIAssistant() {
         body: JSON.stringify({ message: prompt }),
       })
       const data = await response.json()
+      console.log("🤖 Respuesta IA (evaluación):", data)
+      
       const aiResponse = data.response || "No se pudo evaluar la muestra."
       const result = requiredOpening && !aiResponse.startsWith(requiredOpening)
         ? `${requiredOpening} ${aiResponse}`
