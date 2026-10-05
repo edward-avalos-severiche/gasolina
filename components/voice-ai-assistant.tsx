@@ -271,7 +271,7 @@ export default function VoiceAIAssistant() {
       console.log("OK:", response.ok)
       console.log("DATA COMPLETA:", data)
       console.log("data.response:", data.response)
-      console.log("========================================")
+      console.log("========================================") 
       
       speakText(data.response || "No pude encontrar una respuesta para tu pregunta.")
     } catch {
