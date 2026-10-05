@@ -8,7 +8,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const message = typeof body.message === "string" ? body.message.trim() : ""
-
+    
+    console.log("📩 [voice-chat] Mensaje recibido:", message)
+    
     if (!message) {
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 })
     }
