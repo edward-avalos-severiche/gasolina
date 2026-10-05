@@ -261,7 +261,7 @@ export default function VoiceAIAssistant() {
       const response = await fetch("/api/voice-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({max_tokens: 120,  message: trimmedQuestion }),
+        body: JSON.stringify({message: trimmedQuestion }),
       })
       const data = await response.json()
       
