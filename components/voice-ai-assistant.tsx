@@ -158,9 +158,10 @@ export default function VoiceAIAssistant() {
   }
 
   const speakText = (text: string) => {
+    console.log("🔊 IA habla (texto original):", text)
     if (synthRef.current) {
       synthRef.current.cancel()
-
+      console.log("🔊 IA habla (texto limpio):", cleanTextForSpeech(text))
       const utterance = new SpeechSynthesisUtterance(cleanTextForSpeech(text))
       utterance.lang = "es-ES"
       utterance.rate = 1.05 // Ligeramente más rápido para un tono más alegre
