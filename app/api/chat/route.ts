@@ -350,7 +350,7 @@ export async function POST(request: NextRequest) {
     
     console.log("📩 [chat] Mensaje recibido:", message)
 
-    const { text } = await generateText({ model, system: systemPrompt, prompt: message, maxTokens: 200, temperature: 0.3, })
+    const { text } = await generateText({ model, system: systemPrompt, prompt: message })
     console.log("🤖 [chat] Respuesta Groq:", text)
     
     return NextResponse.json({ response: text })
