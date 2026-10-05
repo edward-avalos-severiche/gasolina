@@ -359,6 +359,13 @@ Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`,
 prompt: message,
     })
+    
+    console.log("========================================")
+    console.log("🤖 GROQ GENERÓ RESPUESTA")
+    console.log("MENSAJE RECIBIDO:", message)
+    console.log("RESPUESTA TEXT:", text)
+    console.log("RESPUESTA LENGTH:", text?.length)
+    console.log("========================================")
 
     return NextResponse.json({ response: text })
   } catch (error) {
