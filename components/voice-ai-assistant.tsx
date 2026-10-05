@@ -215,6 +215,7 @@ export default function VoiceAIAssistant() {
 
       if (data.response) {
         let processedResponse = data.response
+        console.log("🤖 Respuesta IA:", data.response)
 
         // Regex para detectar números que podrían ser precios
         const priceRegex = /(\$?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:dólares|usd|euros)?/gi
