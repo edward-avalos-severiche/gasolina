@@ -187,10 +187,12 @@ export default function VoiceAIAssistant() {
       }
 
       utterance.onstart = () => {
+        console.log("▶️ IA empezó a hablar")
         setIsSpeaking(true)
       }
 
       utterance.onend = () => {
+        console.log("⏹️ IA terminó de hablar")
         setIsSpeaking(false)
       }
 
@@ -209,6 +211,7 @@ export default function VoiceAIAssistant() {
       })
 
       const data = await response.json()
+      console.log("🤖 Respuesta cruda de la IA:", data)
 
       if (data.response) {
         let processedResponse = data.response
