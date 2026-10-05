@@ -346,6 +346,8 @@ export async function POST(request: NextRequest) {
     if (!message) {
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 })
     }
+    
+    console.log("📩 [chat] Mensaje recibido:", message)
 
     const { text } = await generateText({ model, system: systemPrompt, prompt: message })
     return NextResponse.json({ response: text })
