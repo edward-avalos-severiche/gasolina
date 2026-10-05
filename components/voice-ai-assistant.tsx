@@ -264,6 +264,15 @@ export default function VoiceAIAssistant() {
         body: JSON.stringify({ message: trimmedQuestion }),
       })
       const data = await response.json()
+      
+      console.log("========================================")
+      console.log("🤖 RESPUESTA DE /api/voice-chat")
+      console.log("HTTP STATUS:", response.status)
+      console.log("OK:", response.ok)
+      console.log("DATA COMPLETA:", data)
+      console.log("data.response:", data.response)
+      console.log("========================================")
+      
       speakText(data.response || "No pude encontrar una respuesta para tu pregunta.")
     } catch {
       speakText("Lo siento, hubo un problema al procesar tu pregunta.")
