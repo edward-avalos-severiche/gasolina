@@ -363,7 +363,6 @@ Y cuando no exista suficiente información, reconoce la incertidumbre.`,
       providerOptions: { groq: { reasoningEffort: "low" } },
       ...(useSearch && {
         tools: { browser_search: groq.tools.browserSearch({}) },
-        toolChoice: "required" as const,
       }),
     })
     
