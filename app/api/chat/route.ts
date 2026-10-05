@@ -3,7 +3,7 @@ import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 
 //const model = groq("openai/gpt-oss-20b")
-const model = groq("openai/gpt-oss-120b")
+const model = groq("meta-llama/llama-prompt-guard-2-22m")
 
 const systemPrompt = `Eres IA Gasolina, un experto de nivel superior en gas, petróleo, combustibles, energía e hidrocarburos de Bolivia.
 
@@ -350,7 +350,7 @@ export async function POST(request: NextRequest) {
     
     console.log("📩 [chat] Mensaje recibido:", message)
 
-    const { text } = await generateText({ model, system: systemPrompt, prompt: message })
+    const { text } = await generateText({ model, system: systemPrompt, prompt: message, maxTokens: 200, temperature: 0.3, })
     console.log("🤖 [chat] Respuesta Groq:", text)
     
     return NextResponse.json({ response: text })

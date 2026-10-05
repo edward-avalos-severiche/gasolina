@@ -3,7 +3,7 @@ import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 
 //const groqModel = groq("openai/gpt-oss-20b")
-const groqModel = groq("openai/gpt-oss-120b")
+const groqModel = groq("meta-llama/llama-prompt-guard-2-22m")
 
 export async function POST(request: NextRequest) {
   try {
@@ -362,6 +362,8 @@ Investiga cuando sea necesario.
 Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`,
       prompt: message,
+      maxTokens: 200,      // 👈 LÍMITE DE SALIDA
+      temperature: 0.3,
       providerOptions: { groq: { reasoningEffort: "medium" } },   // antes: "low"
       ...(useSearch && {
         tools: { browser_search: groq.tools.browserSearch({}) },
