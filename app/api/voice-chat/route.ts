@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const message = typeof body.message === "string" ? body.message.trim() : ""
+    const useSearch = body.search !== false //
     
     console.log("📩 [voice-chat] Mensaje recibido:", message)
     
@@ -15,7 +16,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 })
     }
 
-    const { text } = await generateText({
+    //const { text } = await generateText({
+    const { text, finishReason } = await generateText({
       model: groqModel,
       system:
   `Eres el asistente experto de IA Gasolina, una inteligencia artificial especializada al más alto nivel en el sector hidrocarburífero, energético y de combustibles de Bolivia.
@@ -357,8 +359,23 @@ No presentes opiniones como evidencia.
 Investiga cuando sea necesario.
 Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`,
-prompt: message,
+      prompt: message,
+      providerOptions: { groq: { reasoningEffort: "low" } },
+      ...(useSearch && {
+        tools: { browser_search: groq.tools.browserSearch({}) },
+        toolChoice: "required" as const,
+      }),
     })
+    
+    console.log("🤖 [voice-chat] finishReason:", finishReason, "| largo:", text.length)
+
+    if (!text.trim()) {
+      return NextResponse.json(
+        { response: "No obtuve una respuesta del modelo. Intenta reformular la pregunta." },
+        { status: 502 },
+      )
+    }
+    
     
     console.log("========================================")
     console.log("🤖 GROQ GENERÓ RESPUESTA")
