@@ -350,6 +350,8 @@ export async function POST(request: NextRequest) {
     console.log("📩 [chat] Mensaje recibido:", message)
 
     const { text } = await generateText({ model, system: systemPrompt, prompt: message })
+    console.log("🤖 [chat] Respuesta Groq:", text)
+    
     return NextResponse.json({ response: text })
   } catch (error) {
     console.error("Error al conectar con Groq:", error)
