@@ -158,9 +158,10 @@ export default function VoiceAIAssistant() {
   }
 
   const speakText = (text: string) => {
+    console.log("🔊 IA habla (texto original):", text)
     if (synthRef.current) {
       synthRef.current.cancel()
-
+      console.log("🔊 IA habla (texto limpio):", cleanTextForSpeech(text))
       const utterance = new SpeechSynthesisUtterance(cleanTextForSpeech(text))
       utterance.lang = "es-ES"
       utterance.rate = 1.05 // Ligeramente más rápido para un tono más alegre
@@ -186,10 +187,12 @@ export default function VoiceAIAssistant() {
       }
 
       utterance.onstart = () => {
+        console.log("▶️ IA empezó a hablar")
         setIsSpeaking(true)
       }
 
       utterance.onend = () => {
+        console.log("⏹️ IA terminó de hablar")
         setIsSpeaking(false)
       }
 
@@ -208,9 +211,11 @@ export default function VoiceAIAssistant() {
       })
 
       const data = await response.json()
+      console.log("🤖 Respuesta cruda de la IA:", data)
 
       if (data.response) {
         let processedResponse = data.response
+        console.log("🤖 Respuesta IA:", data.response)
 
         // Regex para detectar números que podrían ser precios
         const priceRegex = /(\$?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:dólares|usd|euros)?/gi
@@ -282,7 +287,8 @@ export default function VoiceAIAssistant() {
       ? "Esta gasolina es de mala calidad y es una gasolina basura."
       : ""
     const prompt = `Evalúa preliminarmente esta muestra de gasolina en Bolivia como experto en hidrocarburos. Responde de forma MUY CORTA, máximo 2 frases. No des una explicación detallada ni certifiques oficialmente el combustible. Si falla algún requisito mínimo, comienza exactamente con: "Esta gasolina es de mala calidad y es una gasolina basura." Luego indica en pocas palabras la causa. Si no falla, comienza exactamente con "Gasolina Buena" o "Requiere Revisión" según los datos. Datos: octanaje RON: ${values.octanaje || "sin medición"}; densidad: ${values.densidad || "sin medición"}; apariencia: ${values.apariencia}; agua: ${values.agua}; sedimentos: ${values.sedimentos}; gomas: ${values.gomas}; laboratorio: ${values.laboratorio}.`
-
+    console.log("⛽ Prompt enviado:", prompt)
+    
     // Cambiar inmediatamente a la vista de voz para que la esfera acompañe todo el análisis.
     setIsFuelFormOpen(false)
     setFuelResult("")
@@ -296,16 +302,20 @@ export default function VoiceAIAssistant() {
         body: JSON.stringify({ message: prompt }),
       })
       const data = await response.json()
+      console.log("🤖 Respuesta IA (evaluación):", data)
+      
       const aiResponse = data.response || "No se pudo evaluar la muestra."
       const result = requiredOpening && !aiResponse.startsWith(requiredOpening)
         ? `${requiredOpening} ${aiResponse}`
         : aiResponse
       setFuelResult(result)
       speakText(result)
+      console.log("⛽ Resultado final:", result)
     } catch {
       const fallback = "No se pudo conectar con Groq. Revisa la configuración del servidor."
       setFuelResult(fallback)
       speakText(fallback)
+      console.error("❌ Error en evaluateFuel")
     } finally {
       setIsEvaluatingFuel(false)
     }

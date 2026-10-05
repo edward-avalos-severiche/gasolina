@@ -70,6 +70,7 @@ export default function AISphereChat() {
         body: JSON.stringify({ message: inputValue }),
       })
       const data = await response.json()
+      console.log("🤖 Respuesta IA:", data)
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: data.response || data.error || "No recibí una respuesta de Groq.",
