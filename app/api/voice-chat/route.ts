@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
     }
 
     //const { text } = await generateText({
-    const { text, finishReason } = await generateText({
+    //const { text, finishReason } = await generateText({
+    const result = await generateText({
       model: groqModel,
       system:
   `Eres el asistente experto de IA Gasolina, una inteligencia artificial especializada al más alto nivel en el sector hidrocarburífero, energético y de combustibles de Bolivia.
@@ -367,7 +368,15 @@ Y cuando no exista suficiente información, reconoce la incertidumbre.`,
       })  ,
     })
     
-    console.log("🤖 [voice-chat] finishReason:", finishReason, "| largo:", text.length)
+    //console.log("🤖 [voice-chat] finishReason:", finishReason, "| largo:", text.length)
+    
+    const r = result as any
+    console.log("finishReason:", r.finishReason)
+    console.log("usage:", JSON.stringify(r.usage))
+    console.log("pasos:", r.steps?.length)
+    console.log("content:", JSON.stringify(r.content?.map((c: any) => ({ type: c.type, tool: c.toolName, len: (c.text ?? "").length }))))
+    console.log("razonamiento:", (r.reasoningText ?? "").slice(0, 300))
+    const text = result.text
 
     if (!text.trim()) {
       return NextResponse.json(
