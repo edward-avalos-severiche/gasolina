@@ -310,10 +310,12 @@ export default function VoiceAIAssistant() {
         : aiResponse
       setFuelResult(result)
       speakText(result)
+      console.log("⛽ Resultado final:", result)
     } catch {
       const fallback = "No se pudo conectar con Groq. Revisa la configuración del servidor."
       setFuelResult(fallback)
       speakText(fallback)
+      console.error("❌ Error en evaluateFuel")
     } finally {
       setIsEvaluatingFuel(false)
     }
