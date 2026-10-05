@@ -362,8 +362,6 @@ Investiga cuando sea necesario.
 Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`,
       prompt: message,
-      maxTokens: 200,      // 👈 LÍMITE DE SALIDA
-      temperature: 0.3,
       providerOptions: { groq: { reasoningEffort: "medium" } },   // antes: "low"
       ...(useSearch && {
         tools: { browser_search: groq.tools.browserSearch({}) },
