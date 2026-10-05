@@ -371,7 +371,16 @@ Y cuando no exista suficiente información, reconoce la incertidumbre.`,
 
     if (!text.trim()) {
       return NextResponse.json(
-        { response: "No obtuve una respuesta del modelo. Intenta reformular la pregunta." },
+        {
+          response: "No obtuve una respuesta del modelo. Intenta reformular la pregunta.",
+          debug: {
+            finishReason: r.finishReason,
+            usage: r.usage,
+            steps: r.steps?.length,
+            content: r.content?.map((c: any) => ({ type: c.type, tool: c.toolName, len: (c.text ?? "").length })),
+            reasoning: (r.reasoningText ?? "").slice(0, 500),
+          },
+        },
         { status: 502 },
       )
     }
