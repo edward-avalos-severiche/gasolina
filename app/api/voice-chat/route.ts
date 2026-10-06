@@ -362,7 +362,7 @@ Investiga cuando sea necesario.
 Contrasta las fuentes.
 Y cuando no exista suficiente información, reconoce la incertidumbre.`,
       prompt: message,
-      providerOptions: { groq: { reasoningEffort: "medium" } },   // antes: "low"
+      //providerOptions: { groq: { reasoningEffort: "medium" } },   // antes: "low"
       ...(useSearch && {
         tools: { browser_search: groq.tools.browserSearch({}) },
         // toolChoice eliminado: queda en "auto" y el modelo decide cuándo buscar
