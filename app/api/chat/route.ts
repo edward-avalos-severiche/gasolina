@@ -3,7 +3,7 @@ import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 
 //const model = groq("openai/gpt-oss-20b")
-const model = groq("meta-llama/llama-prompt-guard-2-22m")
+const model = groq("qwen/qwen3.8-27b")
 
 const systemPrompt = `Eres IA Gasolina, un experto de nivel superior en gas, petróleo, combustibles, energía e hidrocarburos de Bolivia.
 
