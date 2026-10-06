@@ -76,6 +76,7 @@ export default function VoiceAIAssistant() {
           if (hasHighConfidenceSpeech) {
             // Solo reiniciar el temporizador si se detecta voz con alta confianza
             currentTranscriptRef.current += finalTranscript // Acumular la transcripción final
+            console.log("Trans", finalTranscript)
             resetSilenceTimeout() // Reiniciar el temporizador de silencio con cada nueva voz detectada
           }
           // Si se detecta algo pero con baja confianza (posiblemente ruido),
@@ -452,7 +453,7 @@ export default function VoiceAIAssistant() {
                     <select name="apariencia" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>Transparente y sin partículas visibles</option><option>Ligera turbidez / duda visual</option><option>Turbia o con partículas visibles</option></select>
                   </label>
                   <label className="rounded-lg bg-white p-4 text-sm font-semibold">4. Presencia de agua
-                    <span className="mt-2 block text-xs font-normal text-slate-600">Indique si mediante un método apropiado se detectó agua. Agua detectada requiere investigaci��n; sin prueba no puede evaluarse.</span>
+                    <span className="mt-2 block text-xs font-normal text-slate-600">Indique si mediante un método apropiado se detectó agua. Agua detectada requiere investigaci���n; sin prueba no puede evaluarse.</span>
                     <select name="agua" className="mt-3 w-full rounded-md border border-slate-300 p-2.5 font-normal"><option>No se detecta agua</option><option>Se detecta agua</option><option>No se realizó la prueba</option></select>
                   </label>
                 </div>
