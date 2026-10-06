@@ -3,7 +3,7 @@ import { generateText } from "ai"
 import { groq } from "@ai-sdk/groq"
 
 //const groqModel = groq("openai/gpt-oss-20b")
-const groqModel = groq("meta-llama/llama-prompt-guard-2-22m")
+const groqModel = groq("qwen/qwen3.8-27b")
 
 export async function POST(request: NextRequest) {
   try {
