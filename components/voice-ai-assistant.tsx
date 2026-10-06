@@ -76,7 +76,7 @@ export default function VoiceAIAssistant() {
           if (hasHighConfidenceSpeech) {
             // Solo reiniciar el temporizador si se detecta voz con alta confianza
             currentTranscriptRef.current += finalTranscript // Acumular la transcripción final
-            console.log("Trans", finalTranscript)
+            console.log("Transcripcion final: ", finalTranscript)
             resetSilenceTimeout() // Reiniciar el temporizador de silencio con cada nueva voz detectada
           }
           // Si se detecta algo pero con baja confianza (posiblemente ruido),
